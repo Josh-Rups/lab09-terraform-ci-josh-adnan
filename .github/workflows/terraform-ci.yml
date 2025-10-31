@@ -32,6 +32,12 @@ jobs:
         run: terraform plan -no-color -input=false -var-file="terraform/terraform.tfvars" -out=tfplan.bin
         working-directory: terraform
 
+        env:
+         AWS_ACCESS_KEY_ID: "dummy"
+         AWS_SECRET_ACCESS_KEY: "dummy"
+         AWS_DEFAULT_REGION: "us-east-1"
+
+
       - name: Terraform Show (plan.txt)
         run: terraform show -no-color tfplan.bin | tee plan.txt
         working-directory: terraform
