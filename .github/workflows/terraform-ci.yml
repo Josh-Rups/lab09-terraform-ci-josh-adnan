@@ -29,7 +29,7 @@ jobs:
         working-directory: terraform
 
       - name: Terraform Plan (save binary)
-        run: terraform plan -no-color -out=tfplan.bin
+        run: terraform plan -no-color -input=false -var-file="terraform/terraform.tfvars" -out=tfplan.bin
         working-directory: terraform
 
       - name: Terraform Show (plan.txt)
