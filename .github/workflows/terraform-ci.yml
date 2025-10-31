@@ -6,9 +6,6 @@ on:
 jobs:
   fmt-validate-plan:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
 
     steps:
       - name: Checkout repo
@@ -21,21 +18,27 @@ jobs:
 
       - name: Terraform FMT (check style)
         run: terraform fmt -check -recursive
+        working-directory: terraform
 
       - name: Terraform Init
         run: terraform init -input=false
+        working-directory: terraform
 
       - name: Terraform Validate
         run: terraform validate -no-color
+        working-directory: terraform
 
       - name: Terraform Plan (save binary)
         run: terraform plan -no-color -out=tfplan.bin
+        working-directory: terraform
 
       - name: Terraform Show (plan.txt)
         run: terraform show -no-color tfplan.bin | tee plan.txt
+        working-directory: terraform
 
       - name: Upload Plan Artifact
         uses: actions/upload-artifact@v4
         with:
           name: tf-plan-jr2025
-          path: plan.txt
+          path: terraform/plan.txt
+
