@@ -20,23 +20,21 @@ jobs:
         run: terraform fmt -check -recursive
         working-directory: terraform
 
-      - name: Terraform Init
-        run: terraform init -input=false
+      - name: Terraform Init (local backend, safe)
+        run: terraform init -input=false -backend=false
         working-directory: terraform
 
       - name: Terraform Validate
         run: terraform validate -no-color
         working-directory: terraform
 
-      - name: Terraform Plan (save binary)
+      - name: Terraform Plan (simulate only)
         run: terraform plan -no-color -input=false -var-file="terraform/terraform.tfvars" -out=tfplan.bin
         working-directory: terraform
-
         env:
-         AWS_ACCESS_KEY_ID: "dummy"
-         AWS_SECRET_ACCESS_KEY: "dummy"
-         AWS_DEFAULT_REGION: "us-east-1"
-
+          AWS_ACCESS_KEY_ID: "dummy"
+          AWS_SECRET_ACCESS_KEY: "dummy"
+          AWS_DEFAULT_REGION: "us-east-1"
 
       - name: Terraform Show (plan.txt)
         run: terraform show -no-color tfplan.bin | tee plan.txt
