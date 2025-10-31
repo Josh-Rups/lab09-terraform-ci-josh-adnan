@@ -1,0 +1,45 @@
+name: terraform-ci
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  fmt-validate-plan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.5
+
+      - name: Terraform FMT (check style)
+        run: terraform fmt -check -recursive
+        working-directory: terraform
+
+      - name: Terraform Init
+        run: terraform init -input=false
+        working-directory: terraform
+
+      - name: Terraform Validate
+        run: terraform validate -no-color
+        working-directory: terraform
+
+      - name: Terraform Plan (save binary)
+        run: terraform plan -input=false -no-color -out=tfplan.bin
+        working-directory: terraform
+
+      - name: Terraform Show (plan.txt)
+        run: terraform show -no-color tfplan.bin | tee plan.txt
+        working-directory: terraform
+
+      - name: Upload Plan Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tf-plan-jr2025
+          path: terraform/plan.txt
+
+
